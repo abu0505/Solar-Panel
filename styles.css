@@ -247,7 +247,7 @@ html.lenis body {
 /* ====== LIVE CHAT WIDGET ====== */
 .chat-widget {
     position: fixed;
-    bottom: 24px;
+    bottom: 90px;
     right: 24px;
     z-index: 9990;
 }
