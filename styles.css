@@ -1197,7 +1197,123 @@ nav {
     box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     perspective: 1000px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
+
+/* Noise Texture Overlay for Glassmorphism */
+.bento-card .noise-texture {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: overlay;
+    border-radius: inherit;
+}
+
+/* Animated Gradient Border Container */
+.bento-card .animated-border {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(from var(--border-angle, 0deg),
+            transparent 0%,
+            transparent 25%,
+            rgba(234, 179, 8, 0.4) 30%,
+            rgba(251, 191, 36, 0.6) 35%,
+            rgba(245, 158, 11, 0.4) 40%,
+            transparent 45%,
+            transparent 100%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+/* Second Animated Border - Opposite Corner (180deg offset, reverse direction) */
+.bento-card .animated-border-2 {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(from var(--border-angle-2, 180deg),
+            transparent 0%,
+            transparent 25%,
+            rgba(234, 179, 8, 0.4) 30%,
+            rgba(251, 191, 36, 0.6) 35%,
+            rgba(245, 158, 11, 0.4) 40%,
+            transparent 45%,
+            transparent 100%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+/* Register the custom properties for border animations */
+@property --border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@property --border-angle-2 {
+    syntax: '<angle>';
+    initial-value: 180deg;
+    inherits: false;
+}
+
+/* Animated border rotation on hover - First border (clockwise) */
+.bento-card:hover .animated-border {
+    opacity: 1;
+    animation: border-rotate-animation 3s linear infinite;
+}
+
+/* Animated border rotation on hover - Second border (counter-clockwise) */
+.bento-card:hover .animated-border-2 {
+    opacity: 1;
+    animation: border-rotate-animation-reverse 3s linear infinite;
+}
+
+@keyframes border-rotate-animation {
+    from {
+        --border-angle: 0deg;
+    }
+
+    to {
+        --border-angle: 360deg;
+    }
+}
+
+@keyframes border-rotate-animation-reverse {
+    from {
+        --border-angle-2: 180deg;
+    }
+
+    to {
+        --border-angle-2: -180deg;
+    }
+}
+
 
 .bento-card::before {
     content: '';
@@ -1237,8 +1353,12 @@ nav {
 }
 
 .bento-card:hover {
-    border-color: rgba(234, 179, 8, 0.3);
-    box-shadow: 0 20px 40px -15px rgba(234, 179, 8, 0.2);
+    /* border-color: color-mix(in oklab, var(--color-yellow-500)60%, transparent); */
+    box-shadow:
+        inset 0 0 30px rgba(255, 255, 255, 0.08),
+        0 25px 50px -15px rgba(234, 179, 8, 0.25);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
 }
 
 .bento-card>* {
@@ -1444,10 +1564,11 @@ nav {
         border-color 0.4s ease;
 }
 
+
+
 /* Hover glow effect */
 .card-tilt:hover {
     box-shadow:
-        0 0 0 2px rgba(234, 179, 8, 0.4),
         0 20px 50px -15px rgba(234, 179, 8, 0.25),
         0 25px 70px -10px rgba(0, 0, 0, 0.3);
 }

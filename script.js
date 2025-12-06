@@ -605,6 +605,22 @@ document.getElementById('testimonial-carousel').addEventListener('mouseleave', (
 // Initialize testimonial carousel
 updateTestimonialCarousel();
 
+// Hero Image Parallax Effect
+const heroImage = document.querySelector('.morph-shape img');
+if (heroImage) {
+    gsap.to(heroImage, {
+        yPercent: 20,
+        scale: 1.1,
+        ease: "none",
+        scrollTrigger: {
+            trigger: "#home",
+            start: "top top",
+            end: "bottom top",
+            scrub: true
+        }
+    });
+}
+
 // GSAP Horizontal Scroll for Projects Section (Buttery Smooth)
 const projectTrack = document.getElementById('project-track');
 const projectsContainer = document.getElementById('projects-container');
@@ -1450,7 +1466,7 @@ if (typeof VanillaTilt !== 'undefined') {
 
     if (tiltCards.length > 0) {
         VanillaTilt.init(tiltCards, {
-            max: 12,                 // Max tilt rotation (degrees)
+            max: 4,                 // Max tilt rotation (degrees)
             speed: 600,              // Smooth transition speed
             perspective: 1500,       // 3D perspective depth
             glare: true,             // Enable glare effect
