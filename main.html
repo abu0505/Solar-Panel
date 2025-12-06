@@ -32,9 +32,12 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Lenis Smooth Scroll for buttery smooth scrolling -->
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -391,45 +394,25 @@
         </div>
     </section>
     <!-- Trusted By Section -->
-    <section class="py-16 border-y border-gray-800/50 overflow-hidden">
+    <section class="py-10 border-y border-gray-800/50 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p class="text-center text-xs text-gray-500 mb-8 scroll-reveal">TRUSTED BY LEADING
-                COMPANIES
-            </p>
+            <p class="text-center text-xs text-gray-500 mb-8 scroll-reveal">TRUSTED BY LEADING COMPANIES</p>
             <div class="marquee-container">
                 <div class="marquee-content">
-                    <!-- First set of companies -->
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        Tesla </div>
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        SunPower </div>
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        LG Solar </div>
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        Panasonic </div>
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        Enphase </div>
+                    <!-- First set of Indian companies -->
+                    <span class="marquee-item">Tata Power</span>
+                    <span class="marquee-item">Adani Green</span>
+                    <span class="marquee-item">Reliance</span>
+                    <span class="marquee-item">Waaree</span>
+                    <span class="marquee-item">Vikram Solar</span>
+                    <span class="marquee-item">L&T</span>
                     <!-- Duplicated set for seamless loop -->
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        Tesla </div>
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        SunPower </div>
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        LG Solar </div>
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        Panasonic </div>
-                    <div
-                        class="marquee-item text-2xl font-semibold text-gray-600 hover:text-yellow-400 transition-colors cursor-pointer">
-                        Enphase </div>
+                    <span class="marquee-item">Tata Power</span>
+                    <span class="marquee-item">Adani Green</span>
+                    <span class="marquee-item">Reliance</span>
+                    <span class="marquee-item">Waaree</span>
+                    <span class="marquee-item">Vikram Solar</span>
+                    <span class="marquee-item">L&T</span>
                 </div>
             </div>
         </div>
@@ -1623,6 +1606,10 @@
                                 id="trees-equivalent">140
                                 trees</span>
                         </div>
+                        <!-- Chart Container -->
+                        <div class="mt-8 h-64 w-full">
+                            <canvas id="savingsChart"></canvas>
+                        </div>
                     </div><button
                         class="w-full gradient-gold text-black py-4 rounded-xl font-medium btn-glow mt-8 hover:shadow-lg hover:shadow-yellow-500/25 transition-all flex items-center justify-center space-x-2"><span>Get
                             Detailed Quote</span><i data-lucide="arrow-right" class="w-5 h-5"
@@ -1716,19 +1703,19 @@
                 </div>
 
                 <div class="bg-zinc-900/50 border border-gray-800 rounded-2xl p-6 lg:p-8 scroll-reveal">
-                    <form class="space-y-6">
+                    <form class="space-y-6" id="contact-form">
                         <div class="grid sm:grid-cols-2 gap-6">
                             <div>
                                 <label class="text-sm text-gray-400 mb-2 block">First
                                     Name</label>
-                                <input type="text"
+                                <input type="text" id="contact-first-name"
                                     class="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-yellow-500 focus:outline-none transition-colors"
                                     placeholder="John">
                             </div>
                             <div>
                                 <label class="text-sm text-gray-400 mb-2 block">Last
                                     Name</label>
-                                <input type="text"
+                                <input type="text" id="contact-last-name"
                                     class="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-yellow-500 focus:outline-none transition-colors"
                                     placeholder="Doe">
                             </div>
@@ -1737,7 +1724,7 @@
                         <div>
                             <label class="text-sm text-gray-400 mb-2 block">Email
                                 Address</label>
-                            <input type="email"
+                            <input type="email" id="contact-email"
                                 class="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-yellow-500 focus:outline-none transition-colors"
                                 placeholder="john@example.com">
                         </div>
@@ -1745,7 +1732,7 @@
                         <div>
                             <label class="text-sm text-gray-400 mb-2 block">Phone
                                 Number</label>
-                            <input type="tel"
+                            <input type="tel" id="contact-phone"
                                 class="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-yellow-500 focus:outline-none transition-colors"
                                 placeholder="+1 (234) 567-8900">
                         </div>
@@ -1753,9 +1740,9 @@
                         <div>
                             <label class="text-sm text-gray-400 mb-2 block">Service
                                 Interest</label>
-                            <select
+                            <select id="contact-service"
                                 class="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-yellow-500 focus:outline-none transition-colors">
-                                <option>Select a service
+                                <option value="">Select a service
                                 </option>
                                 <option>Solar Installation
                                 </option>
@@ -1770,12 +1757,12 @@
 
                         <div>
                             <label class="text-sm text-gray-400 mb-2 block">Message</label>
-                            <textarea rows="4"
+                            <textarea rows="4" id="contact-message"
                                 class="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-yellow-500 focus:outline-none transition-colors resize-none"
                                 placeholder="Tell us about your project..."></textarea>
                         </div>
 
-                        <button type="submit"
+                        <button type="submit" id="contact-submit"
                             class="w-full gradient-gold text-black px-8 py-4 rounded-xl font-medium btn-glow hover:shadow-2xl hover:shadow-yellow-500/30 transition-all transform hover:scale-105 flex items-center justify-center space-x-2">
                             <span>Send Message</span>
                             <i data-lucide="send" class="w-5 h-5" stroke-width="1.5"></i>
@@ -1895,7 +1882,9 @@
     </button>
 
 
+    <!-- VanillaTilt.js for premium 3D card tilt effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
     <script src="script.js"></script>
 </body>
 
-</html>
+</html> 

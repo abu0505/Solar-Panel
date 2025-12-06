@@ -1,0 +1,23 @@
+{
+  "name": "solar-panel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abu0505/Solar-Panel.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abu0505/Solar-Panel/issues"
+  },
+  "homepage": "https://github.com/abu0505/Solar-Panel#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.1.17"
+  }
+}

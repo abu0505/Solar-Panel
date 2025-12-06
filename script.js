@@ -29,6 +29,73 @@ function toggleFAQ(button) {
 }
 
 // Savings Calculator Logic
+// Chart Global Variable
+let savingsChart = null;
+
+function initChart() {
+    const ctx = document.getElementById('savingsChart').getContext('2d');
+
+    // Gradient for Solar Savings
+    const gradientSolar = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientSolar.addColorStop(0, '#eab308');
+    gradientSolar.addColorStop(1, '#a16207');
+
+    savingsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Year 1', 'Year 5', 'Year 10', 'Year 20', 'Year 25'],
+            datasets: [
+                {
+                    label: 'Traditional Bill (No Solar)',
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(239, 68, 68, 0.5)',
+                    borderColor: '#ef4444',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Savings with Solar',
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: gradientSolar,
+                    borderColor: '#eab308',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#9ca3af'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#9ca3af',
+                        callback: function (value) { return '$' + value.toLocaleString(); }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#9ca3af'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Savings Calculator Logic
 function calculateSavings() {
     // Get slider values
     const monthlyBill = parseFloat(document.getElementById('bill-slider').value);
@@ -41,7 +108,6 @@ function calculateSavings() {
     document.getElementById('sun-value').textContent = sunHours;
 
     // Solar panel calculations
-    // Average solar panel is ~17.5 sq ft and produces ~350W
     const panelsCanFit = Math.floor(roofSize / 17.5);
     const systemSizeKW = (panelsCanFit * 350) / 1000; // Convert to kW
 
@@ -54,17 +120,15 @@ function calculateSavings() {
     const electricityRate = 0.13;
 
     // Calculate savings (capped at monthly bill)
+    // Note: This logic assumes 100% offset if production > bill which simplifies things
     const monthlySavingsCalc = Math.min(monthlyProduction * electricityRate, monthlyBill);
     const monthlySavings = Math.round(monthlySavingsCalc);
     const annualSavings = monthlySavings * 12;
     const lifetimeSavings = annualSavings * 25;
 
     // Environmental impact
-    // 1 kWh = 0.92 lbs CO2, convert to tons
     const co2ReductionLbs = annualProduction * 0.92;
     const co2ReductionTons = (co2ReductionLbs / 2000).toFixed(1);
-
-    // Average tree absorbs ~48 lbs CO2/year
     const treesEquivalent = Math.round(co2ReductionLbs / 48);
 
     // Update display
@@ -78,6 +142,43 @@ function calculateSavings() {
     updateSliderBackground('bill-slider');
     updateSliderBackground('roof-slider');
     updateSliderBackground('sun-slider');
+
+    // Update Chart
+    if (!savingsChart) {
+        initChart();
+    }
+
+    // Calculate cumulative data for chart
+    // Year 1, 5, 10, 20, 25
+    const years = [1, 5, 10, 20, 25];
+    // Traditional: Bill * 12 * Year (assuming 4% inflation)
+    const inflation = 0.04;
+
+    const traditionalData = years.map(year => {
+        let totalCost = 0;
+        let currentAnnualBill = monthlyBill * 12;
+        for (let i = 0; i < year; i++) {
+            totalCost += currentAnnualBill;
+            currentAnnualBill *= (1 + inflation);
+        }
+        return Math.round(totalCost);
+    });
+
+    const solarSavingsData = years.map(year => {
+        // Simple calculation: Annual Savings * Year (ignoring utility rate hikes for savings to keep it conservative/simple or match traditional cost growth)
+        // Let's match the "Traditional" cost growth logic to show what they WOULD have paid vs saved
+        let totalSavings = 0;
+        let currentAnnualSavings = annualSavings;
+        for (let i = 0; i < year; i++) {
+            totalSavings += currentAnnualSavings;
+            currentAnnualSavings *= (1 + inflation);
+        }
+        return Math.round(totalSavings);
+    });
+
+    savingsChart.data.datasets[0].data = traditionalData;
+    savingsChart.data.datasets[1].data = solarSavingsData;
+    savingsChart.update();
 }
 
 function updateSliderBackground(sliderId) {
@@ -178,6 +279,129 @@ imageRevealElements.forEach((el) => {
         }
     );
 });
+
+// ===== PREMIUM SPLIT TEXT REVEAL ANIMATION =====
+// Ultra-premium text reveal animation - words reveal from bottom through a mask
+function initSplitTextAnimations() {
+    const textRevealElements = document.querySelectorAll('.text-reveal, h1, h2:not(.no-text-reveal)');
+
+    textRevealElements.forEach((el) => {
+        // Skip if already processed or is inside hero (hero has its own animation)
+        if (el.dataset.textProcessed || el.closest('.animate-slide-up')) return;
+        el.dataset.textProcessed = 'true';
+
+        // Store original HTML
+        const originalHTML = el.innerHTML;
+
+        // Split text into words while preserving HTML tags
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = originalHTML;
+
+        // Process text nodes - BUT skip gradient-gold-text elements
+        function processNode(node, skipSplitting = false) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                // If parent says skip splitting, just return the node as-is
+                if (skipSplitting) {
+                    return node;
+                }
+
+                const text = node.textContent;
+                const words = text.split(/(\s+)/); // Split by whitespace, keeping spaces
+                const fragment = document.createDocumentFragment();
+
+                words.forEach((word, index) => {
+                    if (word.trim() === '') {
+                        // Preserve whitespace
+                        fragment.appendChild(document.createTextNode(word));
+                    } else {
+                        // Create word wrapper with mask
+                        const wordWrapper = document.createElement('span');
+                        wordWrapper.className = 'word-mask';
+                        wordWrapper.style.cssText = 'display: inline-block; overflow: hidden; vertical-align: bottom;';
+
+                        const wordInner = document.createElement('span');
+                        wordInner.className = 'word-inner';
+                        wordInner.style.cssText = 'display: inline-block; transform: translateY(100%);';
+                        wordInner.textContent = word;
+
+                        wordWrapper.appendChild(wordInner);
+                        fragment.appendChild(wordWrapper);
+                    }
+                });
+
+                return fragment;
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                // Check if this element has gradient-gold-text class - if so, wrap the ENTIRE element
+                // instead of splitting its content (to preserve gradient)
+                if (node.classList && node.classList.contains('gradient-gold-text')) {
+                    // Wrap the entire gradient span in word-mask/word-inner without splitting content
+                    const wordWrapper = document.createElement('span');
+                    wordWrapper.className = 'word-mask';
+                    wordWrapper.style.cssText = 'display: inline-block; overflow: hidden; vertical-align: bottom;';
+
+                    const wordInner = document.createElement('span');
+                    wordInner.className = 'word-inner';
+                    wordInner.style.cssText = 'display: inline-block; transform: translateY(100%);';
+
+                    // Clone the original node with all its content and styling
+                    wordInner.appendChild(node.cloneNode(true));
+                    wordWrapper.appendChild(wordInner);
+
+                    return wordWrapper;
+                }
+
+                // For other elements, process child nodes
+                const children = Array.from(node.childNodes);
+                children.forEach(child => {
+                    const processed = processNode(child, skipSplitting);
+                    if (processed !== child) {
+                        node.replaceChild(processed, child);
+                    }
+                });
+                return node;
+            }
+            return node;
+        }
+
+        // Process all child nodes
+        const children = Array.from(tempDiv.childNodes);
+        children.forEach(child => processNode(child));
+
+        // Replace element content
+        el.innerHTML = tempDiv.innerHTML;
+
+        // Get all word inners for animation
+        const wordInners = el.querySelectorAll('.word-inner');
+
+        if (wordInners.length > 0) {
+            // GSAP ScrollTrigger animation
+            gsap.to(wordInners, {
+                y: 0,
+                duration: 0.8,
+                ease: "power3.out",
+                stagger: {
+                    amount: 0.4,
+                    from: "start"
+                },
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        }
+    });
+
+    console.log('✨ Split text reveal animations initialized!');
+}
+
+// Initialize split text animations after DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSplitTextAnimations);
+} else {
+    // Small delay to ensure other scripts have run
+    setTimeout(initSplitTextAnimations, 100);
+}
 
 // About section image animation
 const aboutContainer = document.querySelector('.scroll-reveal-about');
@@ -776,22 +1000,25 @@ document.querySelectorAll('.ripple-container').forEach(button => {
     });
 });
 
-// Magnetic Button Effect
+// Magnetic Button Effect - Desktop Only (prevents bad mobile UX)
 const magneticButtons = document.querySelectorAll('.btn-magnetic');
 
-magneticButtons.forEach(button => {
-    button.addEventListener('mousemove', (e) => {
-        const rect = button.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
+// Only enable magnetic effect on desktop devices
+if (window.innerWidth > 768) {
+    magneticButtons.forEach(button => {
+        button.addEventListener('mousemove', (e) => {
+            const rect = button.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
 
-        button.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-    });
+            button.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+        });
 
-    button.addEventListener('mouseleave', () => {
-        button.style.transform = 'translate(0, 0)';
+        button.addEventListener('mouseleave', () => {
+            button.style.transform = 'translate(0, 0)';
+        });
     });
-});
+}
 
 // Smooth scroll with easing
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -913,7 +1140,9 @@ if (sectionIndicator) {
 // ===== HERO FLOATING ELEMENTS ANIMATION (GSAP) =====
 const heroFloat1 = document.querySelector('.hero-float-1');
 const heroFloat2 = document.querySelector('.hero-float-2');
+const heroOrbitRings = document.querySelectorAll('#hero-bg > div:not(.hero-float-1):not(.hero-float-2)');
 
+// Base floating animation
 if (heroFloat1) {
     gsap.to(heroFloat1, {
         y: -30,
@@ -934,6 +1163,69 @@ if (heroFloat2) {
         repeat: -1,
         yoyo: true
     });
+}
+
+// ===== HERO SECTION PARALLAX - Organic Mouse Move Effect =====
+// Moves floating blobs in OPPOSITE direction for depth perception
+const heroBg = document.getElementById('hero-bg');
+if (heroBg && window.innerWidth > 768) {
+    const heroSection = document.getElementById('home');
+
+    heroSection.addEventListener('mousemove', (e) => {
+        const rect = heroSection.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+        const mouseY = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+
+        // Move blobs in OPPOSITE direction with different speeds for depth
+        if (heroFloat1) {
+            gsap.to(heroFloat1, {
+                xPercent: -mouseX * 20,  // Opposite direction
+                yPercent: -mouseY * 15,
+                duration: 0.8,
+                ease: "power2.out",
+                overwrite: 'auto'
+            });
+        }
+
+        if (heroFloat2) {
+            gsap.to(heroFloat2, {
+                xPercent: -mouseX * 30,  // Faster movement (further from viewer)
+                yPercent: -mouseY * 25,
+                duration: 1,
+                ease: "power2.out",
+                overwrite: 'auto'
+            });
+        }
+
+        // Subtle movement for orbit rings
+        heroOrbitRings.forEach((ring, index) => {
+            gsap.to(ring, {
+                xPercent: -mouseX * (5 + index * 3),
+                yPercent: -mouseY * (5 + index * 3),
+                rotation: mouseX * 2,
+                duration: 1.2,
+                ease: "power2.out",
+                overwrite: 'auto'
+            });
+        });
+    });
+
+    // Reset on mouse leave
+    heroSection.addEventListener('mouseleave', () => {
+        [heroFloat1, heroFloat2, ...heroOrbitRings].forEach(el => {
+            if (el) {
+                gsap.to(el, {
+                    xPercent: 0,
+                    yPercent: 0,
+                    rotation: 0,
+                    duration: 1,
+                    ease: "power3.out"
+                });
+            }
+        });
+    });
+
+    console.log('🌊 Hero parallax initialized!');
 }
 
 // ===== ANNOUNCEMENT BAR =====
@@ -1088,3 +1380,164 @@ if (socialProof && socialProofText) {
 }
 
 console.log('🚀 Preloader, scroll progress, navbar animations, and professional elements initialized!');
+
+// ===== FORM VALIDATION & SUCCESS INTERACTION =====
+const contactForm = document.getElementById('contact-form');
+
+if (contactForm) {
+    // Create Success Modal HTML
+    const successModal = document.createElement('div');
+    successModal.className = 'success-modal';
+    successModal.innerHTML = `
+        <div class="flex flex-col items-center">
+            <div class="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-4">
+                <i data-lucide="check" class="w-8 h-8 text-green-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Message Sent!</h3>
+            <p class="text-gray-400 mb-6">Thank you for reaching out. Our solar experts will get back to you within 24 hours.</p>
+            <button class="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors" onclick="closeSuccessModal()">Close</button>
+        </div>
+    `;
+    document.body.appendChild(successModal);
+
+    window.closeSuccessModal = function () {
+        successModal.classList.remove('active');
+    };
+
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let isValid = true;
+
+        // Reset previous errors
+        document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
+        document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+        // Validate Fields
+        const requiredIds = ['contact-first-name', 'contact-last-name', 'contact-email', 'contact-phone', 'contact-service', 'contact-message'];
+
+        requiredIds.forEach(id => {
+            const input = document.getElementById(id);
+            if (!input) return;
+
+            if (!input.value.trim()) {
+                showError(input, 'This field is required');
+                isValid = false;
+            } else if (id === 'contact-email' && !isValidEmail(input.value)) {
+                showError(input, 'Please enter a valid email address');
+                isValid = false;
+            }
+        });
+
+        if (isValid) {
+            // Show Success Modal
+            successModal.classList.add('active');
+            contactForm.reset();
+
+            // Re-initialize icons for the new modal content
+            lucide.createIcons();
+
+            // Auto close after 5 seconds
+            setTimeout(() => {
+                closeSuccessModal();
+            }, 5000);
+        }
+    });
+
+    function showError(input, message) {
+        input.classList.add('error-border');
+        const errorMsg = document.createElement('span');
+        errorMsg.className = 'error-message';
+        errorMsg.textContent = message;
+        input.parentNode.appendChild(errorMsg);
+    }
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+}
+
+// ===== SKELETON LOADING =====
+window.addEventListener('load', () => {
+    const images = document.querySelectorAll('img');
+
+    images.forEach(img => {
+        // Skip small icons or very small images if needed, or specific exclusions
+        if (img.classList.contains('no-skeleton')) return;
+
+        // Reset if already loaded (for cached)
+        if (img.complete) {
+            handleImageLoad(img);
+        } else {
+            // Apply loading state to parent
+            const parent = img.parentElement;
+            if (parent) {
+                parent.classList.add('image-loading');
+            }
+
+            img.addEventListener('load', () => handleImageLoad(img));
+            img.addEventListener('error', () => handleImageLoad(img)); // Handle error to remove skeleton
+        }
+    });
+
+    function handleImageLoad(img) {
+        const parent = img.parentElement;
+        if (parent) {
+            // Small delay to ensure smooth transition
+            setTimeout(() => {
+                parent.classList.add('loaded');
+                // Remove class after transition to clean up
+                setTimeout(() => {
+                    parent.classList.remove('image-loading');
+                }, 500);
+            }, 100);
+        }
+    }
+});
+
+// ===== VANILLATILT 3D CARD EFFECT =====
+// Initialize VanillaTilt for premium Apple TV-style 3D card tilt on service cards
+if (typeof VanillaTilt !== 'undefined') {
+    const tiltCards = document.querySelectorAll('.card-tilt');
+
+    if (tiltCards.length > 0) {
+        VanillaTilt.init(tiltCards, {
+            max: 12,                 // Max tilt rotation (degrees)
+            speed: 600,              // Smooth transition speed
+            perspective: 1500,       // 3D perspective depth
+            glare: true,             // Enable glare effect
+            "max-glare": 0.15,       // Subtle glare intensity
+            scale: 1.03,             // Slight scale on hover
+            reset: true,             // Smooth reset on mouse leave
+            gyroscope: true,         // Enable gyroscope on mobile
+            gyroscopeMinAngleX: -15, // Min gyroscope angle X
+            gyroscopeMaxAngleX: 15,  // Max gyroscope angle X
+            gyroscopeMinAngleY: -15, // Min gyroscope angle Y
+            gyroscopeMaxAngleY: 15,  // Max gyroscope angle Y
+        });
+
+        // Add mouse tracking for dynamic lighting overlay
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Update CSS variables for lighting effect
+                const mouseXPercent = (x / rect.width) * 100;
+                const mouseYPercent = (y / rect.height) * 100;
+                card.style.setProperty('--mouse-x', `${mouseXPercent}%`);
+                card.style.setProperty('--mouse-y', `${mouseYPercent}%`);
+            });
+
+            card.addEventListener('mouseleave', () => {
+                // Reset lighting position
+                card.style.setProperty('--mouse-x', '50%');
+                card.style.setProperty('--mouse-y', '50%');
+            });
+        });
+
+        console.log('✨ VanillaTilt 3D card effect initialized for', tiltCards.length, 'cards');
+    }
+} else {
+    console.warn('⚠️ VanillaTilt library not loaded');
+}
