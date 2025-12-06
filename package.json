@@ -5,8 +5,7 @@
   "main": "script.js",
   "scripts": {
     "dev": "tailwindcss -i ./src/input.css -o ./dist/tailwind.css --watch",
-  "build": "npx tailwindcss -i ./src/input.css -o ./dist/tailwind.css --minify",    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "build": "node node_modules/tailwindcss/lib/cli.js -i ./src/input.css -o ./dist/tailwind.css --minify",  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/abu0505/Solar-Panel.git"
