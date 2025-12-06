@@ -1084,58 +1084,7 @@ if (scrollProgress) {
     }, { passive: true });
 }
 
-// ===== STICKY SECTION INDICATOR =====
-const sectionIndicator = document.getElementById('section-indicator');
-if (sectionIndicator) {
-    const indicatorItems = sectionIndicator.querySelectorAll('.section-indicator-item');
-    const sections = [];
 
-    // Gather sections that correspond to indicator items
-    indicatorItems.forEach(item => {
-        const href = item.getAttribute('href');
-        if (href) {
-            const section = document.querySelector(href);
-            if (section) {
-                sections.push({ element: section, indicator: item, id: href });
-            }
-        }
-    });
-
-    // Create IntersectionObserver to detect which section is in view
-    const observerOptions = {
-        root: null,
-        rootMargin: '-20% 0px -60% 0px', // Trigger when section is near center of viewport
-        threshold: 0
-    };
-
-    const sectionObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Remove active from all indicators
-                indicatorItems.forEach(item => item.classList.remove('active'));
-
-                // Add active to the corresponding indicator
-                const activeSection = sections.find(s => s.element === entry.target);
-                if (activeSection) {
-                    activeSection.indicator.classList.add('active');
-                }
-            }
-        });
-    }, observerOptions);
-
-    // Observe all sections
-    sections.forEach(section => {
-        sectionObserver.observe(section.element);
-    });
-
-    // Also handle the hero section (which may not have an ID always)
-    const heroSection = document.querySelector('#home') || document.querySelector('section:first-of-type');
-    if (heroSection && !sections.find(s => s.element === heroSection)) {
-        sectionObserver.observe(heroSection);
-    }
-
-    console.log('📍 Section indicator initialized with', sections.length, 'sections');
-}
 
 // ===== HERO FLOATING ELEMENTS ANIMATION (GSAP) =====
 const heroFloat1 = document.querySelector('.hero-float-1');

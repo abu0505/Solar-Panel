@@ -11,7 +11,7 @@
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+
     <link rel="preconnect" href="https://unpkg.com">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://images.unsplash.com">
@@ -28,7 +28,7 @@
     <meta name="twitter:description"
         content="Transform your home or business with premium solar panel installation. Save up to 70% on electricity bills.">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -39,6 +39,7 @@
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
+    <link rel="stylesheet" href="dist/tailwind.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -192,16 +193,7 @@
         </a>
     </div>
 
-    <!-- Sticky Section Indicator -->
-    <nav class="section-indicator" id="section-indicator">
-        <div class="section-indicator-line"></div>
-        <a href="#home" class="section-indicator-item active" data-section="Home" title="Home"></a>
-        <a href="#services" class="section-indicator-item" data-section="Services" title="Services"></a>
-        <a href="#about" class="section-indicator-item" data-section="About" title="About"></a>
-        <a href="#projects" class="section-indicator-item" data-section="Projects" title="Projects"></a>
-        <a href="#testimonials" class="section-indicator-item" data-section="Reviews" title="Reviews"></a>
-        <a href="#contact" class="section-indicator-item" data-section="Contact" title="Contact"></a>
-    </nav>
+
 
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-yellow-500/10 navbar-hidden"
@@ -394,7 +386,7 @@
         </div>
     </section>
     <!-- Trusted By Section -->
-    <section class="py-10 border-y border-gray-800/50 overflow-hidden">
+    <section class="py-12 border-y border-gray-800/50 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <p class="text-center text-xs text-gray-500 mb-8 scroll-reveal">TRUSTED BY LEADING COMPANIES</p>
             <div class="marquee-container">
@@ -1887,4 +1879,4 @@
     <script src="script.js"></script>
 </body>
 
-</html> 
+</html>
