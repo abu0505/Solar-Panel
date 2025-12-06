@@ -475,8 +475,13 @@
                 </div>
             </div>
             <div class="relative animate-slide-left">
-                <div class="relative z-10 morph-shape overflow-hidden"><img src="images/hero-solar.webp"
-                        alt="Solar Panels" class="w-full h-96 lg:h-[500px] object-cover" loading="lazy"></div>
+                <div class="relative z-10 morph-shape overflow-hidden">
+                    <video id="hero-video" autoplay muted loop playsinline preload="auto" disablePictureInPicture
+                        disableRemotePlayback class="w-full h-96 lg:h-[500px] object-cover"
+                        style="will-change: transform; transform: translateZ(0);" poster="images/hero-solar.webp">
+                        <source src="videos/kam bana.mp4" type="video/mp4">
+                    </video>
+                </div>
                 <div
                     class="-bottom-6 -left-6 animate-bounce-subtle bg-zinc-900 z-10 border-yellow-500/20 border rounded-2xl pt-4 pr-4 pb-4 pl-4 absolute shadow-2xl">
                     <div class="flex items-center space-x-3">
@@ -1221,7 +1226,7 @@
             <!-- 3D Stacked Testimonial Carousel -->
             <div class="relative testimonial-carousel scroll-reveal" id="testimonial-carousel">
                 <!-- Testimonial Cards -->
-                <div class="testimonial-card" data-index="0">
+                <div class="testimonial-card rounded-3xl" data-index="0">
                     <div
                         class="relative bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 lg:p-10 shadow-2xl overflow-hidden group hover:border-yellow-500/30 transition-colors duration-500 h-full flex flex-col justify-between">
                         <!-- Decorative Quote -->
@@ -1268,7 +1273,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card" data-index="1">
+                <div class="testimonial-card rounded-3xl" data-index="1">
                     <div
                         class="relative bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 lg:p-10 shadow-2xl overflow-hidden group hover:border-yellow-500/30 transition-colors duration-500 h-full flex flex-col justify-between">
                         <!-- Decorative Quote -->
@@ -1313,7 +1318,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card" data-index="2">
+                <div class="testimonial-card rounded-3xl" data-index="2">
                     <div
                         class="relative bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 lg:p-10 shadow-2xl overflow-hidden group hover:border-yellow-500/30 transition-colors duration-500 h-full flex flex-col justify-between">
                         <!-- Decorative Quote -->
@@ -1359,7 +1364,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card" data-index="3">
+                <div class="testimonial-card rounded-3xl" data-index="3">
                     <div
                         class="relative bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 lg:p-10 shadow-2xl overflow-hidden group hover:border-yellow-500/30 transition-colors duration-500 h-full flex flex-col justify-between">
                         <!-- Decorative Quote -->
@@ -1405,7 +1410,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card" data-index="4">
+                <div class="testimonial-card rounded-3xl" data-index="4">
                     <div
                         class="relative bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 lg:p-10 shadow-2xl overflow-hidden group hover:border-yellow-500/30 transition-colors duration-500 h-full flex flex-col justify-between">
                         <!-- Decorative Quote -->
@@ -1697,51 +1702,79 @@
                         </div>
                     </div>
                 </div>
-                <!-- Right Side: Results -->
-                <div
-                    class="bg-zinc-900/50 border border-gray-800 rounded-2xl p-8 scroll-reveal hover:border-yellow-500/30 transition-all">
-                    <h3 class="text-xl font-semibold mb-6 tracking-tight">
-                        Your Estimated Savings</h3>
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-center pb-4 border-b border-gray-800">
-                            <span class="text-gray-400">Monthly
-                                Savings</span><span class="text-2xl font-semibold gradient-gold-text"
-                                id="monthly-savings">$140</span>
+                <!-- Right Side: Results with Connected Card Tabs -->
+                <div class="scroll-reveal">
+                    <!-- Tabs Wrapper for Connected Design -->
+                    <div class="card-tabs-wrapper">
+                        <!-- Card Style Tab Bar -->
+                        <div class="card-tabs-container mx-auto">
+                            <!-- Tab 1: Savings Overview -->
+                            <button id="tab-overview" onclick="switchSavingsTab('overview')" class="card-tab active">
+                                <i data-lucide="wallet" class="card-tab-icon" stroke-width="1.5"></i>
+                                <span>Overview</span>
+                            </button>
+                            <!-- Tab 2: Savings Chart -->
+                            <button id="tab-chart" onclick="switchSavingsTab('chart')" class="card-tab">
+                                <i data-lucide="bar-chart-3" class="card-tab-icon" stroke-width="1.5"></i>
+                                <span>Chart</span>
+                            </button>
                         </div>
-                        <div class="flex justify-between items-center pb-4 border-b border-gray-800">
-                            <span class="text-gray-400">Annual
-                                Savings</span><span class="text-2xl font-semibold gradient-gold-text"
-                                id="annual-savings">$1,
-                                680</span>
+
+                        <!-- Tab Content Panel - Connected to Tabs -->
+                        <div id="card-tab-panel" class="card-tab-panel p-6 lg:p-8">
+                            <h3 class="text-xl font-semibold mb-6 tracking-tight">
+                                Your Estimated Savings</h3>
+
+                            <!-- Tab Content -->
+                            <div class="relative min-h-[300px]">
+                                <!-- Overview Tab Content -->
+                                <div id="tab-content-overview" class="savings-tab-content">
+                                    <div class="space-y-5">
+                                        <div class="flex justify-between items-center py-4 border-b border-gray-800/60">
+                                            <span class="text-gray-400">Monthly Savings</span>
+                                            <span class="text-2xl font-semibold gradient-gold-text"
+                                                id="monthly-savings">$140</span>
+                                        </div>
+                                        <div class="flex justify-between items-center py-4 border-b border-gray-800/60">
+                                            <span class="text-gray-400">Annual Savings</span>
+                                            <span class="text-2xl font-semibold gradient-gold-text"
+                                                id="annual-savings">$1,680</span>
+                                        </div>
+                                        <div class="flex justify-between items-center py-4 border-b border-gray-800/60">
+                                            <span class="text-gray-400">25 Year Savings</span>
+                                            <span class="text-2xl font-semibold gradient-gold-text"
+                                                id="lifetime-savings">$42,000</span>
+                                        </div>
+                                        <div class="flex justify-between items-center py-4 border-b border-gray-800/60">
+                                            <span class="text-gray-400">CO₂ Reduction</span>
+                                            <span class="text-xl font-semibold text-green-400" id="co2-savings">8.5
+                                                tons/year</span>
+                                        </div>
+                                        <div class="flex justify-between items-center py-4">
+                                            <span class="text-gray-400">Trees Equivalent</span>
+                                            <span class="text-xl font-semibold text-green-400" id="trees-equivalent">140
+                                                trees</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Chart Tab Content -->
+                                <div id="tab-content-chart" class="savings-tab-content hidden">
+                                    <div class="h-[280px] w-full flex items-center justify-center">
+                                        <canvas id="savingsChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                class="w-full gradient-gold text-black py-4 rounded-xl font-medium btn-glow mt-6 hover:shadow-lg hover:shadow-yellow-500/25 transition-all flex items-center justify-center space-x-2">
+                                <span>Get Detailed Quote</span>
+                                <i data-lucide="arrow-right" class="w-5 h-5" stroke-width="1.5"></i>
+                            </button>
                         </div>
-                        <div class="flex justify-between items-center pb-4 border-b border-gray-800">
-                            <span class="text-gray-400">25
-                                Year Savings</span><span class="text-2xl font-semibold gradient-gold-text"
-                                id="lifetime-savings">$42,
-                                000</span>
-                        </div>
-                        <div class="flex justify-between items-center pb-4 border-b border-gray-800">
-                            <span class="text-gray-400">CO₂
-                                Reduction</span><span class="text-xl font-semibold text-green-400" id="co2-savings">8.5
-                                tons/year</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-400">Trees
-                                Equivalent</span><span class="text-xl font-semibold text-green-400"
-                                id="trees-equivalent">140
-                                trees</span>
-                        </div>
-                        <!-- Chart Container -->
-                        <div class="mt-8 h-64 w-full">
-                            <canvas id="savingsChart"></canvas>
-                        </div>
-                    </div><button
-                        class="w-full gradient-gold text-black py-4 rounded-xl font-medium btn-glow mt-8 hover:shadow-lg hover:shadow-yellow-500/25 transition-all flex items-center justify-center space-x-2"><span>Get
-                            Detailed Quote</span><i data-lucide="arrow-right" class="w-5 h-5"
-                            stroke-width="1.5"></i></button>
+                    </div>
                 </div>
             </div>
-        </div>
     </section>
 
 
@@ -1989,13 +2022,20 @@
                 </div>
             </div>
 
-            <div class="pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-between items-center">
-                <p class="text-sm text-gray-500">© 2024 Long
-                    Light
-                    Power. All rights reserved.</p>
-                <p class="text-sm text-gray-500 mt-4 sm:mt-0">
-                    Designed with <span class="text-yellow-400">☀️</span> for
-                    a sustainable future</p>
+            <!-- Footer Brand Section -->
+            <div class="relative overflow-hidden" style="min-height: 280px;">
+                <!-- Large LLP Watermark Text with Gradient - Top Gray to Bottom Black -->
+                <div class="absolute bottom-0 left-0 right-0 flex items-end justify-center pointer-events-none select-none"
+                    style="transform: translateY(35%);">
+                    <span class="font-bold tracking-wider leading-none"
+                        style="font-family: 'Playfair Display', serif; font-size: clamp(14rem, 30vw, 32rem); background: linear-gradient(to bottom, rgb(60, 60, 60) 0%, rgb(10, 10, 10) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">LLP</span>
+                </div>
+
+                <!-- Centered Copyright Text - Overlapping on LLP -->
+                <div class="absolute bottom-0 left-0 right-0 z-10 text-center" style="bottom: 35%;">
+                    <p class="text-xs text-gray-600 uppercase" style="letter-spacing: 0.25em;">© 2024 Long Light Power.
+                        All rights reserved.</p>
+                </div>
             </div>
         </div>
     </footer>

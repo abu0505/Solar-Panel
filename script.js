@@ -195,6 +195,65 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateSavings();
 });
 
+// Savings Calculator Tab Switching Function (Card-style)
+function switchSavingsTab(tabName) {
+    const tabOverview = document.getElementById('tab-overview');
+    const tabChart = document.getElementById('tab-chart');
+    const contentOverview = document.getElementById('tab-content-overview');
+    const contentChart = document.getElementById('tab-content-chart');
+
+    if (tabName === 'overview') {
+        // Activate Overview Tab
+        tabOverview.classList.add('active');
+        tabChart.classList.remove('active');
+
+        // Show/Hide content with animation
+        contentOverview.classList.remove('hidden');
+        contentOverview.style.opacity = '0';
+        contentOverview.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            contentOverview.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+            contentOverview.style.opacity = '1';
+            contentOverview.style.transform = 'translateY(0)';
+        }, 10);
+
+        contentChart.classList.add('hidden');
+    } else if (tabName === 'chart') {
+        // Activate Chart Tab
+        tabChart.classList.add('active');
+        tabOverview.classList.remove('active');
+
+        // Show/Hide content with animation
+        contentChart.classList.remove('hidden');
+        contentChart.style.opacity = '0';
+        contentChart.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            contentChart.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+            contentChart.style.opacity = '1';
+            contentChart.style.transform = 'translateY(0)';
+        }, 10);
+
+        contentOverview.classList.add('hidden');
+
+        // Reinitialize/resize chart when tab becomes visible
+        if (savingsChart) {
+            setTimeout(() => {
+                savingsChart.resize();
+                savingsChart.update();
+            }, 50);
+        } else {
+            // Initialize chart if not already done
+            setTimeout(() => {
+                initChart();
+                calculateSavings();
+            }, 50);
+        }
+    }
+
+    // Reinitialize lucide icons in the tabs
+    lucide.createIcons();
+}
+
 lucide.createIcons();
 
 // ===== LENIS SMOOTH SCROLL =====

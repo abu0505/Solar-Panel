@@ -1735,7 +1735,7 @@ nav {
 /* Connector dots */
 .process-connector-dot {
     position: absolute;
-    top: 3rem;
+    top: 3.2rem;
     width: 12px;
     height: 12px;
     background: linear-gradient(135deg, #f59e0b, #eab308);
@@ -1784,17 +1784,17 @@ nav {
 
 @media (min-width: 1024px) {
     .process-connector-dot-1 {
-        left: calc(25% - 6px);
+        left: calc(25%);
         animation-delay: 0s;
     }
 
     .process-connector-dot-2 {
-        left: calc(50% - 6px);
+        left: calc(51% - 5px);
         animation-delay: 0.5s;
     }
 
     .process-connector-dot-3 {
-        left: calc(75% - 6px);
+        left: calc(76%);
         animation-delay: 1s;
     }
 }
@@ -2283,4 +2283,96 @@ body {
 /* Pause animation on hover for better UX */
 .marquee-container:hover .marquee-content {
     animation-play-state: paused;
+}
+
+/* ====== CONNECTED CARD TABS ====== */
+.card-tabs-wrapper {
+    position: relative;
+}
+
+.card-tabs-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+    /* Lower than panel so overlap is covered */
+    transform: translateY(0.5rem);
+    width: 90%;
+    /* Overlap into the panel */
+}
+
+.card-tab {
+    height: 3rem;
+    width: 10rem;
+    background-color: rgb(5 5 5);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: none;
+    border-radius: 0.75rem 0.75rem 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-tab span {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgb(115, 115, 115);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color 150ms ease;
+}
+
+/* Hover effect - height increases, slight brighten */
+.card-tab:hover {
+    background-color: rgb(8 8 8);
+    height: 3.5rem;
+}
+
+.card-tab:hover span {
+    color: rgb(255, 255, 255);
+}
+
+/* Active tab - even more height and brighter */
+.card-tab.active {
+    background-color: rgb(12 12 12);
+    height: 3.75rem;
+    z-index: 15;
+}
+
+.card-tab.active span {
+    color: #fff;
+}
+
+/* Tab icon styling */
+.card-tab-icon {
+    width: 16px;
+    height: 16px;
+    color: rgb(115, 115, 115);
+    transition: color 150ms ease;
+}
+
+.card-tab:hover .card-tab-icon {
+    color: rgb(255, 255, 255);
+}
+
+.card-tab.active .card-tab-icon {
+    color: #fff;
+}
+
+/* Tab content panel - connected to tabs */
+.card-tab-panel {
+    background-color: rgb(5 5 5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 0.75rem;
+    position: relative;
+    z-index: 5;
+    padding: 2rem;
 }
