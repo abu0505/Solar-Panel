@@ -1932,9 +1932,9 @@
     </section>
 
     <!-- Footer -->
-    <footer class="py-16 border-t border-gray-800">
+    <footer class="pt-12 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
                 <div>
                     <div class="flex items-center space-x-2 mb-6">
                         <div class="w-10 h-10 gradient-gold rounded-lg flex items-center justify-center">
@@ -2023,17 +2023,28 @@
             </div>
 
             <!-- Footer Brand Section -->
-            <div class="relative overflow-hidden" style="min-height: 280px;">
-                <!-- Large LLP Watermark Text with Gradient - Top Gray to Bottom Black -->
-                <div class="absolute bottom-0 left-0 right-0 flex items-end justify-center pointer-events-none select-none"
-                    style="transform: translateY(35%);">
-                    <span class="font-bold tracking-wider leading-none"
-                        style="font-family: 'Playfair Display', serif; font-size: clamp(14rem, 30vw, 32rem); background: linear-gradient(to bottom, rgb(60, 60, 60) 0%, rgb(10, 10, 10) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">LLP</span>
+            <div class="relative overflow-hidden" style="min-height: 320px;">
+                <!-- Large LLP Watermark SVG - Sized to match original text -->
+                <div class="absolute left-0 right-0 flex items-end justify-center pointer-events-none select-none"
+                    style="bottom: -1.3rem;">
+                    <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMax meet"
+                        style="width: clamp(50rem, 80vw, 90rem); height: auto;">
+                        <defs>
+                            <linearGradient id="llpGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color: rgb(30, 30, 30);" />
+                                <stop offset="100%" style="stop-color: rgb(2, 2, 2);" />
+                            </linearGradient>
+                        </defs>
+                        <text x="50%" y="95%" text-anchor="middle" fill="url(#llpGradient)"
+                            style="font-family: 'Playfair Display', serif; font-size: 160px; font-weight: 700; letter-spacing: 0.05em;">LLP</text>
+                    </svg>
                 </div>
 
                 <!-- Centered Copyright Text - Overlapping on LLP -->
-                <div class="absolute bottom-0 left-0 right-0 z-10 text-center" style="bottom: 35%;">
-                    <p class="text-xs text-gray-600 uppercase" style="letter-spacing: 0.25em;">© 2024 Long Light Power.
+                <div class="absolute left-0 right-0 z-10 text-center" style="bottom: 35%;">
+                    <p class="text-xs text-gray-400 uppercase"
+                        style="letter-spacing: 0.25em; text-shadow: 0 0 6px rgba(0, 0, 0, 1);">© 2024 Long Light
+                        Power.
                         All rights reserved.</p>
                 </div>
             </div>
