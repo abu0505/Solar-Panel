@@ -480,39 +480,142 @@ const revealAboutImages = () => {
 window.addEventListener('scroll', revealAboutImages);
 revealAboutImages();
 
-// Counter animation
-const counters = document.querySelectorAll('.counter');
-let counterAnimated = false;
+/**
+ * ===== DYNAMIC MARQUEE CLONING =====
+ * Clones marquee items for seamless infinite loop animation
+ * @description Duplicates all marquee items via JS to avoid HTML duplication
+ */
+function initMarqueeCloning() {
+    const marqueeTrack = document.getElementById('marquee-track');
+    if (!marqueeTrack) return;
 
-const animateCounters = () => {
-    if (counterAnimated) return;
+    const items = marqueeTrack.querySelectorAll('.marquee-item');
+    if (items.length === 0) return;
 
-    counters.forEach(counter => {
-        const rect = counter.getBoundingClientRect();
-        if (rect.top < window.innerHeight - 100) {
-            counterAnimated = true;
-            const target = parseInt(counter.getAttribute('data-target'));
-            const suffix = counter.getAttribute('data-suffix') || '';
-            let current = 0;
-            const increment = target / 50;
-
-            const updateCounter = () => {
-                if (current < target) {
-                    current += increment;
-                    counter.textContent = Math.ceil(current) + suffix;
-                    requestAnimationFrame(updateCounter);
-                } else {
-                    counter.textContent = target + suffix;
-                }
-            };
-
-            updateCounter();
-        }
+    // Clone all items for seamless loop
+    items.forEach(item => {
+        const clone = item.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true'); // Hide clones from screen readers
+        marqueeTrack.appendChild(clone);
     });
-};
 
-window.addEventListener('scroll', animateCounters);
-animateCounters();
+    console.log('🎠 Marquee cloning initialized with', items.length, 'items');
+}
+
+// Initialize marquee cloning on DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMarqueeCloning);
+} else {
+    initMarqueeCloning();
+}
+
+/**
+ * ===== ENHANCED COUNTER ANIMATION WITH INTERSECTION OBSERVER =====
+ * Uses Intersection Observer for reliable scroll-triggered animation
+ * @description Animates counters when they enter viewport, with suffix slide-in effect
+ */
+function initEnhancedCounters() {
+    const statsContainer = document.getElementById('stats-container');
+    if (!statsContainer) return;
+
+    const counters = statsContainer.querySelectorAll('.counter');
+    const statCards = statsContainer.querySelectorAll('.stat-card');
+    const progressRings = statsContainer.querySelectorAll('.stat-progress-ring');
+
+    let hasAnimated = false;
+
+    /**
+     * Animates a single counter from 0 to target value
+     * @param {HTMLElement} counter - The counter element
+     * @param {number} target - Target value to count to
+     * @param {number} duration - Animation duration in ms
+     */
+    function animateCounter(counter, target, duration = 2000) {
+        const startTime = performance.now();
+        const statCard = counter.closest('.stat-card');
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Eased progress (ease-out cubic)
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(eased * target);
+
+            counter.textContent = current;
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            } else {
+                counter.textContent = target;
+                // Trigger suffix animation after counter completes
+                if (statCard) {
+                    statCard.classList.add('animated');
+                }
+            }
+        }
+
+        requestAnimationFrame(update);
+    }
+
+    /**
+     * Animates progress ring SVG
+     * @param {HTMLElement} ring - The progress ring container
+     */
+    function animateProgressRing(ring) {
+        const progressBar = ring.querySelector('.progress-bar');
+        if (!progressBar) return;
+
+        const progress = parseInt(progressBar.getAttribute('data-progress')) || 0;
+        // stroke-dashoffset: 283 = full circle, 0 = empty
+        // For 98%: 283 - (283 * 0.98) = 5.66
+        const offset = 283 - (283 * (progress / 100));
+
+        // Trigger animation after a short delay
+        setTimeout(() => {
+            ring.classList.add('animated');
+            progressBar.style.strokeDashoffset = offset;
+        }, 500);
+    }
+
+    // Intersection Observer for triggering animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !hasAnimated) {
+                hasAnimated = true;
+
+                // Animate all counters with staggered delay
+                counters.forEach((counter, index) => {
+                    const target = parseInt(counter.getAttribute('data-target')) || 0;
+                    setTimeout(() => {
+                        animateCounter(counter, target, 2000);
+                    }, index * 150);
+                });
+
+                // Animate progress rings
+                progressRings.forEach(ring => {
+                    animateProgressRing(ring);
+                });
+
+                observer.disconnect();
+            }
+        });
+    }, {
+        threshold: 0.3,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    observer.observe(statsContainer);
+
+    console.log('📊 Enhanced counter animation initialized with Intersection Observer');
+}
+
+// Initialize enhanced counters on DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEnhancedCounters);
+} else {
+    setTimeout(initEnhancedCounters, 100);
+}
 
 // Back to top button
 const backToTop = document.getElementById('back-to-top');
@@ -1564,4 +1667,62 @@ if (typeof VanillaTilt !== 'undefined') {
     }
 } else {
     console.warn('⚠️ VanillaTilt library not loaded');
+}
+
+// ===== SPOTLIGHT BORDER EFFECT FOR BENTO GRID =====
+// This creates a mouse-tracking spotlight that illuminates card borders near the cursor
+const bentoGrid = document.getElementById('bento-grid');
+
+if (bentoGrid) {
+    const bentoCards = bentoGrid.querySelectorAll('.bento-card');
+
+    // Track mouse across the entire grid
+    bentoGrid.addEventListener('mousemove', (e) => {
+        const gridRect = bentoGrid.getBoundingClientRect();
+
+        // Update spotlight position for each card relative to cursor
+        bentoCards.forEach(card => {
+            const cardRect = card.getBoundingClientRect();
+            const spotlightBorder = card.querySelector('.spotlight-border');
+
+            if (!spotlightBorder) return;
+
+            // Calculate cursor position relative to each card
+            const x = e.clientX - cardRect.left;
+            const y = e.clientY - cardRect.top;
+
+            // Convert to percentage for the gradient
+            const xPercent = (x / cardRect.width) * 100;
+            const yPercent = (y / cardRect.height) * 100;
+
+            // Calculate distance from cursor to card center
+            const cardCenterX = cardRect.left + cardRect.width / 2;
+            const cardCenterY = cardRect.top + cardRect.height / 2;
+            const distance = Math.sqrt(
+                Math.pow(e.clientX - cardCenterX, 2) +
+                Math.pow(e.clientY - cardCenterY, 2)
+            );
+
+            // Max distance for full fade (adjust for sensitivity)
+            const maxDistance = 400;
+            const opacity = Math.max(0, 1 - (distance / maxDistance));
+
+            // Set CSS variables on the spotlight-border element
+            spotlightBorder.style.setProperty('--spotlight-x', `${xPercent}%`);
+            spotlightBorder.style.setProperty('--spotlight-y', `${yPercent}%`);
+            spotlightBorder.style.setProperty('--spotlight-opacity', opacity.toFixed(3));
+        });
+    });
+
+    // Reset on mouse leave
+    bentoGrid.addEventListener('mouseleave', () => {
+        bentoCards.forEach(card => {
+            const spotlightBorder = card.querySelector('.spotlight-border');
+            if (spotlightBorder) {
+                spotlightBorder.style.setProperty('--spotlight-opacity', '0');
+            }
+        });
+    });
+
+    console.log('✨ Spotlight border effect initialized for bento grid');
 }
